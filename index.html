@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Estudos Delegado PCMG</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Delegado">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F3F5F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E151B" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="icon" href="icone-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head><body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app de uma coluna, cabeçalho fixo com progresso, abas embaixo como no iPhone */
+:root {
+  --bg: #F3F5F6; --card: #FFFFFF; --ink: #14212B; --muted: #5D6B75; --line: #DCE2E6;
+  --navy: #1F3A4D; --brass: #9A6B1F; --ok: #2E7D4F; --ok-bg: #E2F1E7; --chip: #E9EEF1;
+  --display: "Source Serif 4", Georgia, serif; --body: "Public Sans", -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0E151B; --card: #16212A; --ink: #E5EBEF; --muted: #93A3AE; --line: #26343F;
+  --navy: #9CC0DA; --brass: #D6A752; --ok: #6CCB92; --ok-bg: #1A3326; --chip: #1F2C36; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0E151B; --card: #16212A; --ink: #E5EBEF; --muted: #93A3AE; --line: #26343F;
+  --navy: #9CC0DA; --brass: #D6A752; --ok: #6CCB92; --ok-bg: #1A3326; --chip: #1F2C36; color-scheme: dark }
+* { box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--ink); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.4; -webkit-tap-highlight-color: transparent; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+header .wrap { padding-block: 12px 10px; display: flex; align-items: center; gap: 14px; }
+.ring { width: 52px; height: 52px; flex: none; }
+.ring circle { fill: none; stroke-width: 6; }
+.ring .bgc { stroke: var(--line); } .ring .fgc { stroke: var(--brass); stroke-linecap: round; transition: stroke-dashoffset .4s; }
+.ring text { fill: var(--ink); font: 700 13px var(--body); }
+.hd { min-width: 0; }
+.hd h1 { font-family: var(--display); font-size: 21px; margin: 0; letter-spacing: -.2px; text-wrap: balance; }
+.hd p { margin: 2px 0 0; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+main .wrap { padding-block: 14px calc(90px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.eyebrow { font-size: 11.5px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--brass); font-weight: 700; }
+h2 { font-family: var(--display); font-size: 20px; margin: 2px 0 0; }
+.daynav { display: flex; align-items: center; gap: 8px; }
+.daynav .t { flex: 1; min-width: 0; }
+.btn { font: 600 14px var(--body); background: var(--chip); color: var(--ink); border: 0; border-radius: 9px; padding: 9px 13px; cursor: pointer; }
+.btn:focus-visible, .chk:focus-visible, summary:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+.btn.prim { background: var(--navy); color: var(--card); }
+.btn.perigo { background: transparent; color: #B4432F; border: 1px solid currentColor; }
+.bloco { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); }
+.bloco:first-of-type { border-top: 0; }
+.bloco .txt { flex: 1; min-width: 0; }
+.bloco .lbl { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .6px; }
+.parte { margin-top: 4px; }
+.parte b { font-weight: 700; }
+.parte .dur { color: var(--muted); font-size: 13px; }
+.chk { appearance: none; -webkit-appearance: none; flex: none; width: 28px; height: 28px; margin: 0; border: 2px solid var(--muted); border-radius: 8px; background: var(--card); cursor: pointer; display: grid; place-content: center; }
+.chk::after { content: ""; width: 12px; height: 7px; border-left: 3px solid var(--card); border-bottom: 3px solid var(--card); transform: rotate(-45deg) translate(1px,-1px); opacity: 0; }
+.chk:checked { background: var(--ok); border-color: var(--ok); }
+.chk:checked::after { opacity: 1; }
+.feito .txt { color: var(--muted); }
+.feito .parte b { text-decoration: line-through; text-decoration-thickness: 1px; }
+.vazio { color: var(--muted); text-align: center; padding: 18px 8px; }
+details.mat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+details.mat summary { list-style: none; cursor: pointer; padding: 13px 14px; display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
+details.mat summary::-webkit-details-marker { display: none; }
+.mnome { font-weight: 700; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.mcont { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+.barra { grid-column: 1 / -1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.barra i { display: block; height: 100%; background: var(--ok); border-radius: 3px; transition: width .3s; }
+.tema { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-top: 1px solid var(--line); }
+.tema .txt { flex: 1; min-width: 0; }
+.tema .meta { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.tema.feito .txt { color: var(--muted); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl td { padding: 7px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.tbl td.n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; padding-left: 10px; }
+.etapa { padding: 9px 0; border-top: 1px solid var(--line); }
+.etapa b { display: block; }
+.nota { color: var(--muted); font-size: 13px; }
+.campo { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.campo input { font: 15px var(--body); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.status { font-size: 12.5px; color: var(--muted); }
+nav.abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--card); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+nav.abas .wrap { display: grid; grid-template-columns: repeat(3, 1fr); }
+nav.abas button { font: 600 13px var(--body); color: var(--muted); background: none; border: 0; padding: 10px 4px 12px; cursor: pointer; display: grid; justify-items: center; gap: 3px; }
+nav.abas button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+nav.abas button[aria-selected="true"] { color: var(--brass); }
+.confirma { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header><div class="wrap">
+  <svg class="ring" viewBox="0 0 52 52" aria-hidden="true"><circle class="bgc" cx="26" cy="26" r="22"/><circle class="fgc" id="anel" cx="26" cy="26" r="22" transform="rotate(-90 26 26)" stroke-dasharray="138.2" stroke-dashoffset="138.2"/><text id="pct" x="26" y="30.5" text-anchor="middle">0%</text></svg>
+  <div class="hd"><h1>Delegado PC-MG</h1><p id="resumo">Carregando seu progresso…</p></div>
+</div></header>
+
+<main><div class="wrap" id="tela"></div></main>
+
+<nav class="abas"><div class="wrap" role="tablist">
+  <button role="tab" id="ab-hoje" data-aba="hoje" aria-selected="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Hoje</button>
+  <button role="tab" id="ab-materias" data-aba="materias" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M5 16.5a3 3 0 0 1 3-3h11"/></svg>Matérias</button>
+  <button role="tab" id="ab-edital" data-aba="edital" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M10 12h5M10 15.5h5"/></svg>Edital</button>
+</div></nav>
+
+<script type="application/json" id="dados">{
+  "titulo": "Plano de Estudos - Delegado PC-MG",
+  "inicio": "2026-11-02",
+  "semanas": 16,
+  "edital": {
+    "nome": "Edital nº 01/2024 - Delegado de Polícia Substituto (FGV)",
+    "vagas": "54 vagas",
+    "requisitos": "Bacharel em Direito + 3 anos de atividade jurídica ou policial",
+    "objetiva": [
+      ["Direito Penal e Legislação Penal Extravagante", 15],
+      ["Direito Processual Penal e Legislação Processual Extravagante", 15],
+      ["Direito Administrativo", 10],
+      ["Direito Constitucional", 10],
+      ["Direitos Humanos", 10],
+      ["Lei Orgânica da PCMG", 5],
+      ["Direito Civil", 5],
+      ["Medicina Legal", 5],
+      ["Criminologia", 5]
+    ],
+    "etapas": [
+      ["Prova objetiva", "80 questões, 5 alternativas. Mínimo de 48 acertos (60%)."],
+      ["Prova dissertativa", "8 questões de até 20 linhas, com consulta à lei seca: 3 Penal, 3 Processo Penal, 1 Administrativo, 1 Constitucional. Mínimo de 50%."],
+      ["Prova oral", "Penal, Processo Penal, Administrativo e Constitucional, até 20 min cada. Mínimo de 50% no total e nenhuma nota zero."],
+      ["Exames biomédicos e biofísicos", "Eliminatórios, com teste físico (Cooper e outros)."],
+      ["Avaliação psicológica", "Eliminatória."],
+      ["Títulos", "Classificatória."],
+      ["Investigação social", "Eliminatória."]
+    ]
+  },
+  "grade": [
+    {"dia": "Seg", "a": "Penal: Código Penal (2h)", "b": "Constitucional (1h30)"},
+    {"dia": "Ter", "a": "Processo Penal: CPP (2h)", "b": "Administrativo (1h30)"},
+    {"dia": "Qua", "a": "Legislação Penal Extravagante (2h)", "b": "Direitos Humanos (1h30)"},
+    {"dia": "Qui", "a": "Legislação Processual Extravagante (2h)", "b": "Constitucional (1h) + Lei Orgânica (30 min)"},
+    {"dia": "Sex", "a": "Administrativo (1h30) + Lei Orgânica (30 min)", "b": "Medicina Legal (1h) + Civil (30 min)"},
+    {"dia": "Sáb", "a": "Questões mistas da FGV (2h) ou simulado completo", "b": "Criminologia (1h) + Civil (30 min)"}
+  ],
+  "materias": [
+    {"id": "pen", "nome": "Penal: Código Penal", "cor": "#B4432F", "dias": "Seg", "hsem": 2, "topicos": [
+      [1, 1, 2, "Princípios, fontes, lei penal no tempo, no espaço e em relação às pessoas; conflito aparente de normas"],
+      [2, 2, 2, "Teoria do crime, conduta, classificação das infrações, nexo causal e imputação objetiva"],
+      [3, 3, 2, "Tipicidade, dolo, culpa, preterdolo e erro de tipo"],
+      [4, 4, 2, "Iter criminis, tentativa, desistência voluntária, arrependimentos e crime impossível"],
+      [5, 5, 2, "Ilicitude e excludentes, excesso; culpabilidade, imputabilidade e erro de proibição"],
+      [6, 6, 2, "Concurso de pessoas, concurso de crimes, aberratio ictus e criminis"],
+      [7, 7, 2, "Penas, dosimetria, regimes, sursis, livramento condicional, efeitos da condenação e medidas de segurança"],
+      [8, 8, 2, "Ação penal, extinção da punibilidade e prescrição"],
+      [9, 9, 2, "Crimes contra a vida e lesões corporais"],
+      [10, 10, 2, "Crimes contra a honra e contra a liberdade individual"],
+      [11, 11, 2, "Crimes contra o patrimônio: furto, roubo, extorsão, estelionato, receptação e imunidades"],
+      [12, 12, 2, "Crimes contra a dignidade sexual"],
+      [13, 13, 2, "Crimes contra a família, a incolumidade pública e a paz pública"],
+      [14, 14, 2, "Crimes contra a fé pública"],
+      [15, 15, 2, "Crimes contra a administração pública e contra a administração da justiça"],
+      [16, 16, 2, "Revisão geral e bateria de questões FGV"]
+    ]},
+    {"id": "lpe", "nome": "Legislação Penal Extravagante", "cor": "#C2662D", "dias": "Qua", "hsem": 2, "topicos": [
+      [1, 1, 2, "Lei de Drogas (11.343/06): crimes"],
+      [2, 2, 2, "Lei de Drogas (continuação) e Crimes Hediondos (8.072/90)"],
+      [3, 3, 2, "Estatuto do Desarmamento (10.826/03)"],
+      [4, 4, 2, "Maria da Penha (11.340/06), Lei Henry Borel (14.344/22) e Lei 13.431/17"],
+      [5, 5, 2, "Organização criminosa (12.850/13): crimes"],
+      [6, 6, 2, "Lavagem de dinheiro (9.613/98) e Tortura (9.455/97)"],
+      [7, 7, 2, "Abuso de autoridade (13.869/19)"],
+      [8, 8, 2, "Crimes de trânsito (CTB, 9.503/97)"],
+      [9, 9, 2, "ECA (8.069/90): crimes e atos infracionais"],
+      [10, 10, 2, "Racismo (7.716/89), Igualdade Racial, Estatuto do Idoso, Pessoa com Deficiência e Lei do HIV"],
+      [11, 11, 2, "Crimes ambientais (9.605/98)"],
+      [12, 12, 2, "Ordem tributária, econômica e consumo (8.137/90, 8.176/91, CDC) e economia popular (1.521/51)"],
+      [13, 13, 2, "Sistema financeiro (7.492/86) e crimes da Lei de Licitações (14.133/21)"],
+      [14, 14, 2, "Terrorismo (13.260/16), genocídio (2.889/56), Contravenções Penais e Lei Geral do Esporte"],
+      [15, 15, 2, "Crimes de responsabilidade, Código Eleitoral, parcelamento do solo, propriedade industrial e software, transplantes, OGM e OAB"],
+      [16, 16, 2, "Revisão e questões"]
+    ]},
+    {"id": "cpp", "nome": "Processo Penal: CPP", "cor": "#2F5D8A", "dias": "Ter", "hsem": 2, "topicos": [
+      [1, 1, 2, "Sistemas processuais, princípios, interpretação e lei processual no tempo e no espaço"],
+      [2, 2, 2, "Inquérito policial I: natureza, características, instauração, notitia e delatio criminis"],
+      [3, 3, 2, "Inquérito policial II: indiciamento, garantias do investigado, conclusão, arquivamento e Lei 12.830/13"],
+      [4, 4, 2, "Ação penal: espécies, condições, decadência, perempção, renúncia e perdão"],
+      [5, 5, 2, "Justiça consensual: ANPP, transação, composição civil e suspensão condicional do processo (9.099/95)"],
+      [6, 6, 2, "Jurisdição e competência, conexão e continência"],
+      [7, 7, 2, "Teoria da prova, provas ilícitas, cadeia de custódia e preservação do local de crime"],
+      [8, 8, 2, "Provas em espécie: corpo de delito, interrogatório, testemunhas, reconhecimento, acareação, busca e apreensão"],
+      [9, 9, 2, "Prisão em flagrante e audiência de custódia"],
+      [10, 10, 2, "Prisão preventiva e prisão temporária (7.960/89)"],
+      [11, 11, 2, "Liberdade provisória, fiança e cautelares diversas da prisão"],
+      [12, 12, 2, "Sujeitos processuais, questões e processos incidentes, medidas assecuratórias e insanidade mental"],
+      [13, 13, 2, "Citação, intimação e procedimentos (comum, especiais e júri)"],
+      [14, 14, 2, "Sentença e nulidades"],
+      [15, 15, 2, "Recursos em geral e em espécie, habeas corpus e revisão criminal"],
+      [16, 16, 2, "Execução penal e revisão geral"]
+    ]},
+    {"id": "lppe", "nome": "Legislação Processual Extravagante", "cor": "#3E7C8C", "dias": "Qui", "hsem": 2, "topicos": [
+      [1, 2, 4, "Interceptação telefônica e captação ambiental (9.296/96) e quebra de sigilos"],
+      [3, 4, 4, "Lei 12.850/13: colaboração premiada, ação controlada e infiltração"],
+      [5, 5, 2, "Lei de Drogas: procedimento e investigação"],
+      [6, 6, 2, "Maria da Penha: medidas protetivas e procedimento"],
+      [7, 8, 4, "Pacote Anticrime (13.964/19)"],
+      [9, 10, 4, "Lei de Execução Penal (7.210/84)"],
+      [11, 11, 2, "Lei 8.038/90, Juizados Federais (10.259/01) e aspectos processuais do CTB e da lei ambiental"],
+      [12, 12, 2, "ECA processual e depoimento especial (13.431/17)"],
+      [13, 16, 8, "Informativos do STF e do STJ sobre investigação criminal e questões FGV"]
+    ]},
+    {"id": "const", "nome": "Direito Constitucional", "cor": "#5B4B8A", "dias": "Seg e Qui", "hsem": 2.5, "topicos": [
+      [1, 2, 6, "Teoria da Constituição, normas constitucionais, hermenêutica, poder constituinte e dinâmica constitucional"],
+      [3, 5, 8, "Princípios fundamentais e direitos e deveres individuais e coletivos (art. 5º)"],
+      [6, 7, 4, "Remédios constitucionais: HC, HD, MS, MI, ação popular e ação civil pública"],
+      [8, 8, 3, "Direitos sociais, nacionalidade e direitos políticos"],
+      [9, 10, 4, "Organização do Estado e intervenção"],
+      [11, 12, 6, "Poderes Legislativo (processo legislativo), Executivo e Judiciário (CNJ)"],
+      [13, 13, 4, "Funções essenciais à Justiça e defesa do Estado: estado de defesa, de sítio e segurança pública (art. 144)"],
+      [14, 15, 4, "Controle de constitucionalidade: difuso, concentrado, ADI, ADO, ADC e ADPF"],
+      [16, 16, 2, "Constituição de Minas Gerais: servidores policiais civis, defesa social e segurança pública"]
+    ]},
+    {"id": "adm", "nome": "Direito Administrativo", "cor": "#2E7D5B", "dias": "Ter e Sex", "hsem": 3, "topicos": [
+      [1, 1, 4, "Conceito, objeto, princípios e regime jurídico administrativo"],
+      [2, 3, 6, "Organização administrativa, terceiro setor e Lei 13.303/16"],
+      [4, 5, 6, "Agentes públicos; arts. 37 a 43 da CF; arts. 13 a 38 da Constituição de MG; Decreto 46.549/14"],
+      [6, 6, 4, "Poderes administrativos e poder de polícia"],
+      [7, 9, 8, "Atos administrativos: elementos, atributos, espécies, extinção, convalidação e conversão"],
+      [10, 10, 4, "Controle da Administração Pública"],
+      [11, 11, 3, "Mandado de segurança (12.016/09)"],
+      [12, 12, 4, "Responsabilidade civil do Estado"],
+      [13, 14, 5, "Improbidade administrativa (8.429/92, já com a reforma)"],
+      [15, 15, 4, "Processo administrativo (9.784/99)"],
+      [16, 16, 3, "Revisão e questões"]
+    ]},
+    {"id": "lo", "nome": "Lei Orgânica da PCMG", "cor": "#6B6B2F", "dias": "Qui e Sex", "hsem": 1, "topicos": [
+      [1, 4, 4, "LC 129/13: disposições gerais, competência, organização e administração superior"],
+      [5, 8, 4, "LC 129/13: estatuto, prerrogativas, direitos, remoção, regime de trabalho, licenças e aposentadoria"],
+      [9, 10, 2, "LC 129/13: carreiras, ingresso, estágio probatório, desenvolvimento, adicional e anexos"],
+      [11, 13, 3, "Lei 5.406/69: transgressões, penalidades e competência para impor penalidades"],
+      [14, 16, 3, "Lei 5.406/69: prisão administrativa, procedimento disciplinar, sindicância, abandono e revisão"]
+    ]},
+    {"id": "dh", "nome": "Direitos Humanos", "cor": "#8A3E6B", "dias": "Qua", "hsem": 1.5, "topicos": [
+      [1, 3, 4, "Teoria geral, construção histórica e hermenêutica dos direitos humanos"],
+      [4, 6, 5, "Sistema global da ONU: DUDH, PIDCP, PIDESC e Convenção contra a Tortura"],
+      [7, 10, 6, "Sistema interamericano: Convenção Americana e casos do Brasil na Corte IDH"],
+      [11, 11, 2, "CF de 1988 e tratados: §§ 2º e 3º do art. 5º e status supralegal"],
+      [12, 14, 4, "Minorias e grupos vulneráveis"],
+      [15, 16, 3, "PNDH, educação em direitos humanos, Agenda 2030 (ODS) e segurança pública"]
+    ]},
+    {"id": "ml", "nome": "Medicina Legal", "cor": "#7A5230", "dias": "Sex", "hsem": 1, "topicos": [
+      [1, 2, 2, "Perícias, peritos, documentos médico-legais e quesitos"],
+      [3, 4, 2, "Antropologia médico-legal: identidade e identificação"],
+      [5, 7, 3, "Traumatologia: lesões corporais e energias de ordem mecânica"],
+      [8, 10, 3, "Energias física, química e físico-química: asfixias em espécie"],
+      [11, 13, 3, "Tanatologia: fenômenos cadavéricos, cronotanatognose, necropsia e exumação"],
+      [14, 15, 2, "Sexologia: crimes sexuais, gravidez, aborto e infanticídio"],
+      [16, 16, 1, "Psicopatologia: imputabilidade, embriaguez e simulação"]
+    ]},
+    {"id": "crim", "nome": "Criminologia", "cor": "#4A6B2F", "dias": "Sáb", "hsem": 1, "topicos": [
+      [1, 2, 2, "Conceito, método, objetos e funções da criminologia"],
+      [3, 8, 6, "Escolas: Clássica, Positivista, Chicago, anomia, associação diferencial, subcultura, labelling approach e crítica"],
+      [9, 11, 3, "Vitimologia: vitimização, revitimização e síndromes"],
+      [12, 13, 2, "Criminalização primária, secundária e terciária; cifras; prevenção"],
+      [14, 16, 3, "Criminologias contemporâneas, mídia, discursos punitivos e abolicionismo"]
+    ]},
+    {"id": "civ", "nome": "Direito Civil", "cor": "#5A5A6E", "dias": "Sex e Sáb", "hsem": 1, "topicos": [
+      [1, 3, 3, "LINDB: vigência, aplicação, conflito de leis no tempo e no espaço"],
+      [4, 6, 3, "Pessoa natural, personalidade, capacidade, direitos da personalidade e domicílio"],
+      [7, 8, 2, "Pessoa jurídica"],
+      [9, 10, 2, "Bens e fato jurídico"],
+      [11, 12, 2, "Prescrição e decadência"],
+      [13, 14, 2, "Responsabilidade civil e danos material e moral"],
+      [15, 16, 2, "CDC (consumidor e fornecedor) e Estatuto do Idoso"]
+    ]},
+    {"id": "sim", "nome": "Questões e simulados", "cor": "#333F48", "dias": "Sáb", "hsem": 2, "topicos": [
+      [4, 4, 4.5, "Simulado completo 1: 80 questões FGV em 4h30"],
+      [8, 8, 4.5, "Simulado completo 2: 80 questões FGV em 4h30"],
+      [12, 12, 4.5, "Simulado completo 3: 80 questões FGV em 4h30"],
+      [16, 16, 4.5, "Simulado completo 4: 80 questões FGV em 4h30"]
+    ]}
+  ],
+  "fases": [
+    ["Fase 1 - Base", "16 semanas (02/11/2026 a 20/02/2027)", "Grade semanal completa: 50% teoria, 20% lei seca, 30% questões FGV. 30 min de revisão espaçada no início de cada dia."],
+    ["Fase 2 - Edital publicado", "8 a 12 semanas", "Comparar o novo conteúdo com o de 2024. 60% do tempo em questões FGV. 2 dissertativas por semana (Penal/Processo Penal e Administrativo/Constitucional, 20 linhas, com lei seca). Simulado completo a cada 2 semanas."],
+    ["Fase 3 - Reta final", "4 semanas antes da objetiva", "Um simulado completo por semana, revisão de resumos, informativos do STF e do STJ e lei seca. Nada de matéria nova."],
+    ["Fase 4 - Dissertativa e oral", "Após a objetiva", "Dissertativa: 3 respostas por dia nas 4 matérias. Oral: responder em voz alta, gravar e cronometrar 20 minutos por matéria."],
+    ["Durante todo o plano", "Sempre", "Treinar para o teste físico (Cooper) e separar os comprovantes dos 3 anos de atividade jurídica ou policial."]
+  ]
+}
+</script>
+<script>
+const P = JSON.parse(document.getElementById("dados").textContent);
+const M = Object.fromEntries(P.materias.map(m => [m.id, m]));
+const NOMES = { pen: "Penal", lpe: "Leg. Penal Extravagante", cpp: "Processo Penal", lppe: "Leg. Processual Extravagante", const: "Constitucional", adm: "Administrativo", lo: "Lei Orgânica", dh: "Direitos Humanos", ml: "Medicina Legal", crim: "Criminologia", civ: "Civil", sim: "Simulado", q: "Questões FGV", rev: "Revisão" };
+const DIAS = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+const HORAS_TOTAL = P.materias.reduce((s, m) => s + m.topicos.reduce((a, t) => a + t[2], 0), 0);
+const TOTAL_TEMAS = P.materias.reduce((s, m) => s + m.topicos.length, 0);
+const tid = (m, i) => m + "-" + (i + 1);
+
+let estado = { t: {}, d: {}, inicio: P.inicio };
+let aba = "hoje", cursor = null, confirmarZerar = false, statusTxt = "", backupAberto = false;
+
+function lerLocal() { try { const s = localStorage.getItem("pcmg-progresso"); if (s) estado = Object.assign(estado, JSON.parse(s)); } catch (e) {} }
+function gravarLocal() { try { localStorage.setItem("pcmg-progresso", JSON.stringify(estado)); } catch (e) {} }
+
+// ---- datas e cronograma ----
+const dataLocal = s => { const [a, m, d] = s.split("-").map(Number); return new Date(a, m - 1, d); };
+const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+function posicao(data) {
+  const ini = dataLocal(estado.inicio);
+  const dias = Math.round((data - ini) / 864e5);
+  return { w: Math.floor(dias / 7) + 1, k: ((dias % 7) + 7) % 7 };
+}
+function tema(id, w) {
+  const m = M[id]; const i = m.topicos.findIndex(t => w >= t[0] && w <= t[1]);
+  return i < 0 ? null : { id: tid(id, i), txt: m.topicos[i][3], cont: w > m.topicos[i][0] };
+}
+function blocos(w, k) {
+  const P_ = (id, dur) => ({ id, dur, tema: tema(id, w) });
+  switch (k) {
+    case 0: return [[P_("pen", "2h")], [P_("const", "1h30")]];
+    case 1: return [[P_("cpp", "2h")], [P_("adm", "1h30")]];
+    case 2: return [[P_("lpe", "2h")], [P_("dh", "1h30")]];
+    case 3: return [[P_("lppe", "2h")], [P_("const", "1h"), P_("lo", "30 min")]];
+    case 4: return [[P_("adm", "1h30"), P_("lo", "30 min")], [P_("ml", "1h"), P_("civ", "30 min")]];
+    case 5: { const s = tema("sim", w); return [[s ? { id: "sim", dur: "4h30", tema: s } : { id: "q", dur: "2h", tema: { txt: "Questões mistas das matérias da semana", cont: false } }], [P_("crim", "1h"), P_("civ", "30 min")]]; }
+  }
+  return [];
+}
+
+// ---- progresso ----
+function progresso() {
+  let feitos = 0, horas = 0;
+  for (const m of P.materias) m.topicos.forEach((t, i) => { if (estado.t[tid(m.id, i)]) { feitos++; horas += t[2]; } });
+  return { feitos, horas, pct: Math.round(horas / HORAS_TOTAL * 100) };
+}
+function cabecalho() {
+  const p = progresso();
+  document.getElementById("pct").textContent = p.pct + "%";
+  document.getElementById("anel").setAttribute("stroke-dashoffset", (138.2 * (1 - p.pct / 100)).toFixed(1));
+  document.getElementById("resumo").textContent = `${p.feitos} de ${TOTAL_TEMAS} temas · ${String(p.horas).replace(".", ",")} de ${HORAS_TOTAL} h`;
+}
+
+// ---- telas ----
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+const fmtData = d => d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+
+function telaHoje() {
+  if (!cursor) { cursor = new Date(); cursor.setHours(0, 0, 0, 0); }
+  const { w, k } = posicao(cursor);
+  let h = `<div class="card"><div class="daynav">
+    <button class="btn" id="ant" aria-label="Dia anterior">‹</button>
+    <div class="t"><div class="eyebrow">${w >= 1 && w <= P.semanas ? "Semana " + w + " de " + P.semanas : "Fora da Fase 1"}</div><h2>${esc(fmtData(cursor))}</h2></div>
+    <button class="btn" id="prox" aria-label="Próximo dia">›</button></div>`;
+  if (w < 1) h += `<p class="vazio">O plano começa em ${dataLocal(estado.inicio).toLocaleDateString("pt-BR")}. Use › para ver os primeiros dias.</p>`;
+  else if (w > P.semanas) h += `<p class="vazio">As 16 semanas da Fase 1 terminaram. Siga as fases seguintes, na aba Edital.</p>`;
+  else if (k === 6) h += `<p class="vazio">Domingo livre. Se perdeu algum dia na semana, este é o dia para repor.</p>`;
+  else {
+    const chave = w + "-" + k;
+    const [a, b] = blocos(w, k);
+    const linha = (rot, partes, sufixo) => {
+      const id = chave + "-" + sufixo, ok = !!estado.d[id];
+      return `<div class="bloco${ok ? " feito" : ""}"><input type="checkbox" class="chk" id="d-${id}" data-dia="${id}"${ok ? " checked" : ""} aria-label="${esc(rot)} feito"><div class="txt"><div class="lbl">${rot}</div>${partes.map(p => `<div class="parte"><b>${NOMES[p.id]}</b> <span class="dur">${p.dur}</span><br>${p.tema ? esc(p.tema.txt) + (p.tema.cont ? " (continuação)" : "") : ""}</div>`).join("")}</div></div>`;
+    };
+    h += linha("Revisão · 30 min", [{ id: "rev", dur: "", tema: { txt: "Revisão espaçada (ontem, 7 e 30 dias atrás) e lei seca" } }], "r");
+    h += linha("Bloco A", a, "a") + linha("Bloco B", b, "b");
+    // temas da semana
+    const ids = new Set();
+    for (let kk = 0; kk < 6; kk++) for (const bl of blocos(w, kk)) for (const p of bl) if (p.tema && p.tema.id) ids.add(p.id + "|" + p.tema.id);
+    h += `</div><div class="card"><div class="eyebrow">Temas desta semana</div><p class="nota" style="margin:4px 0 0">Marque quando terminar o tema inteiro. Temas longos ocupam mais de uma semana.</p>`;
+    for (const x of ids) { const [mid, t] = x.split("|"); const i = Number(t.split("-").pop()) - 1; h += temaLinha(mid, i, true); }
+  }
+  h += `</div>`;
+  return h;
+}
+function temaLinha(mid, i, comNome) {
+  const m = M[mid], t = m.topicos[i], id = tid(mid, i), ok = !!estado.t[id];
+  const sem = t[0] === t[1] ? "Semana " + t[0] : "Semanas " + t[0] + " a " + t[1];
+  return `<div class="tema${ok ? " feito" : ""}" style="padding-inline:0"><input type="checkbox" class="chk" id="t-${id}" data-tema="${id}"${ok ? " checked" : ""} aria-label="Tema estudado"><div class="txt">${comNome ? `<b>${esc(NOMES[mid])}</b><br>` : ""}${esc(t[3])}<div class="meta">${sem} · ${String(t[2]).replace(".", ",")} h</div></div></div>`;
+}
+function telaMaterias() {
+  let h = "";
+  for (const m of P.materias) {
+    const n = m.topicos.filter((t, i) => estado.t[tid(m.id, i)]).length;
+    let abertos = []; try { abertos = JSON.parse(localStorage.getItem("pcmg-abertos") || "[]"); } catch (e) {}
+    h += `<details class="mat" data-mat="${m.id}"${abertos.includes(m.id) ? " open" : ""}><summary><span class="mnome"><span class="dot" style="background:${m.cor}"></span>${esc(m.nome)}</span><span class="mcont">${n}/${m.topicos.length}</span><span class="barra"><i style="width:${n / m.topicos.length * 100}%"></i></span></summary>`;
+    m.topicos.forEach((t, i) => { h += temaLinha(m.id, i, false).replace('style="padding-inline:0"', ""); });
+    h += `</details>`;
+  }
+  return h;
+}
+function telaEdital() {
+  const e = P.edital;
+  let h = `<div class="card"><div class="eyebrow">Baixar o plano</div><p class="nota" style="margin:4px 0 0">O mesmo plano em planilha e em PDF.</p>
+  <div class="campo"><a class="btn prim" href="Plano_Delegado_PCMG.xlsx" download style="text-decoration:none">Planilha (Excel)</a><a class="btn prim" href="Plano_Delegado_PCMG.pdf" target="_blank" rel="noopener" style="text-decoration:none">PDF</a></div></div>`;
+  h += `<div class="card"><div class="eyebrow">Último edital</div><h2>${esc(e.nome)}</h2><p class="nota">${esc(e.vagas)}. ${esc(e.requisitos)}.</p>
+  <table class="tbl">${e.objetiva.map(o => `<tr><td>${esc(o[0])}</td><td class="n">${o[1]}</td></tr>`).join("")}<tr><td><b>Total da objetiva</b> · mínimo de 48</td><td class="n">80</td></tr></table></div>`;
+  h += `<div class="card"><div class="eyebrow">Etapas</div>${e.etapas.map(x => `<div class="etapa"><b>${esc(x[0])}</b><span class="nota">${esc(x[1])}</span></div>`).join("")}</div>`;
+  h += `<div class="card"><div class="eyebrow">Fases do plano</div>${P.fases.map(f => `<div class="etapa"><b>${esc(f[0])}</b><span class="nota">${esc(f[1])}. ${esc(f[2])}</span></div>`).join("")}</div>`;
+  h += `<div class="card"><div class="eyebrow">Ajustes</div><div class="campo"><label for="inicio">Início do plano (uma segunda-feira)</label><input type="date" id="inicio" value="${estado.inicio}"></div>
+  <div class="campo"><span class="status" id="status">${esc(statusTxt)}</span></div>
+  <div class="campo"><button class="btn" id="backup">${backupAberto ? "Fechar backup" : "Backup das marcações"}</button></div>
+  ${backupAberto ? `<p class="nota" style="margin:10px 0 4px">Para guardar: copie o código abaixo e mande para você mesmo no WhatsApp. Para restaurar em outro celular: cole o código aqui e toque em Restaurar.</p>
+  <textarea id="codigo" rows="4" style="width:100%;font:12px ui-monospace,monospace;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)">${esc(codigoBackup())}</textarea>
+  <div class="campo"><button class="btn prim" id="copiar">Copiar código</button><button class="btn" id="restaurar">Restaurar</button></div>` : ""}
+  ${confirmarZerar ? `<div class="confirma"><span>Apagar todas as marcações?</span><button class="btn perigo" id="zerar-sim">Apagar</button><button class="btn" id="zerar-nao">Cancelar</button></div>` : `<div class="campo"><button class="btn perigo" id="zerar">Zerar marcações</button></div>`}</div>`;
+  return h;
+}
+function render() {
+  const el = document.getElementById("tela");
+  el.innerHTML = aba === "hoje" ? telaHoje() : aba === "materias" ? telaMaterias() : telaEdital();
+  document.querySelectorAll("nav.abas button").forEach(b => b.setAttribute("aria-selected", b.dataset.aba === aba ? "true" : "false"));
+  cabecalho();
+}
+
+// ---- eventos ----
+document.querySelector("nav.abas").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; aba = b.dataset.aba; confirmarZerar = false; render(); window.scrollTo(0, 0); });
+document.getElementById("tela").addEventListener("click", e => {
+  const id = e.target.id;
+  if (id === "ant" || id === "prox") { cursor.setDate(cursor.getDate() + (id === "ant" ? -1 : 1)); render(); }
+  if (id === "backup") { backupAberto = !backupAberto; render(); }
+  if (id === "copiar") {
+    const ta = document.getElementById("codigo");
+    const ok = () => setStatus("Código copiado. Cole no WhatsApp para guardar.");
+    if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(ok, () => { ta.select(); setStatus("Selecionei o código: toque em Copiar."); });
+    else { ta.select(); setStatus("Selecionei o código: toque em Copiar."); }
+  }
+  if (id === "restaurar") {
+    try {
+      const d = JSON.parse(decodeURIComponent(escape(atob(document.getElementById("codigo").value.trim()))));
+      if (!d || typeof d.t !== "object") throw 0;
+      estado = { t: d.t || {}, d: d.d || {}, inicio: d.inicio || P.inicio }; cursor = null; backupAberto = false; salvar(); render();
+      setStatus("Marcações restauradas.");
+    } catch (err) { setStatus("Código inválido. Confira se colou o código inteiro."); }
+  }
+  if (id === "zerar") { confirmarZerar = true; render(); }
+  if (id === "zerar-nao") { confirmarZerar = false; render(); }
+  if (id === "zerar-sim") { estado.t = {}; estado.d = {}; confirmarZerar = false; salvar(); render(); }
+});
+document.getElementById("tela").addEventListener("change", e => {
+  const x = e.target;
+  if (x.dataset.tema) { if (x.checked) estado.t[x.dataset.tema] = 1; else delete estado.t[x.dataset.tema]; salvar(); render(); }
+  else if (x.dataset.dia) { if (x.checked) estado.d[x.dataset.dia] = 1; else delete estado.d[x.dataset.dia]; salvar(); render(); }
+  else if (x.id === "inicio" && x.value) { estado.inicio = x.value; cursor = null; salvar(); render(); }
+});
+document.getElementById("tela").addEventListener("toggle", e => {
+  if (!e.target.matches || !e.target.matches("details.mat")) return;
+  const abertos = [...document.querySelectorAll("details.mat[open]")].map(d => d.dataset.mat);
+  try { localStorage.setItem("pcmg-abertos", JSON.stringify(abertos)); } catch (err) {}
+}, true);
+
+// ---- salvamento neste aparelho ----
+function setStatus(t) { statusTxt = t; const s = document.getElementById("status"); if (s) s.textContent = t; }
+function salvar() { gravarLocal(); }
+function codigoBackup() { return btoa(unescape(encodeURIComponent(JSON.stringify({ t: estado.t, d: estado.d, inicio: estado.inicio })))); }
+async function guardarDeVez() {
+  try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {}
+}
+
+lerLocal(); render(); guardarDeVez();
+setStatus("As marcações ficam salvas neste celular. Use o backup para guardar uma cópia.");
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body></html>
